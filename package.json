@@ -1,0 +1,49 @@
+{
+  "name": "unifyre-extension-web3-retrofit",
+  "version": "1.0.0",
+  "description": "Unifyre extension Web3 retrofit",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ferrumnet/unifyre-extension-web3-retrofit.git"
+  },
+  "author": "naiem@ferrument.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ferrumnet/unifyre-extension-web3-retrofit/issues"
+  },
+  "homepage": "https://github.com/ferrumnet/unifyre-extension-web3-retrofit#readme",
+  "dependencies": {
+    "big.js": "^5.2.2",
+    "cross-fetch": "^3.0.4",
+    "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git",
+    "unifyre-extension-sdk": "git+https://github.com/ferrumnet/unifyre-extension-sdk.git",
+    "web3": "^1.2.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/big.js": "^4.0.5",
+    "@types/jest": "^24.0.13",
+    "@types/node": "^13.7.1",
+    "jest": "^24.8.0",
+    "ts-jest": "^26.1.0",
+    "ts-lint": "^4.5.1",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.0.0",
+    "tslint-config-airbnb-base": "^0.3.0",
+    "typescript": "^3.5.3"
+  }
+}

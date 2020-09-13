@@ -1,7 +1,7 @@
 import { Injectable, LocalCache, ValidationUtils } from 'ferrum-plumbing';
-import Web3 from 'web3';
 import FerrumJson from './FerrumToken.json'
 import { Big } from 'big.js';
+import { Connect } from './Connect';
 
 export class ContractCallError extends Error {
     constructor(msg: string, public error: any) {
@@ -10,7 +10,7 @@ export class ContractCallError extends Error {
 }
 
 class ContractBase {
-    constructor(protected web3: Web3) {
+    constructor(protected connection: Connect) {
     }
   
     sendTransactionParams(sender: string, gas: string) {
@@ -20,7 +20,7 @@ class ContractBase {
     }
   
     async contractExist(contractAddress: string) {
-      const code = await this.web3.eth.getCode(contractAddress);
+      const code = await this.connection.web3()!.eth.getCode(contractAddress);
       return code.length > 4;
     }
   
@@ -54,7 +54,7 @@ class ContractBase {
 
 export class TokenContractFactory implements Injectable {
     private cache: LocalCache;
-    constructor(private web3: Web3) {
+    constructor(private connection: Connect) {
         this.cache = new LocalCache();
      }
     __name__() { return 'TokenContractFactory'; }
@@ -62,9 +62,9 @@ export class TokenContractFactory implements Injectable {
     async forToken(token: string) {
         ValidationUtils.isTrue(!!token, '"token" must be provided');
         return this.cache.getAsync(token, async () => {
-            const con = new TokenContract(this.web3);
-            await con.init(token);
-            return con;
+          const con = new TokenContract(this.connection);
+          await con.init(token);
+          return con;
         });
     }
 }
@@ -74,8 +74,8 @@ export class TokenContract extends ContractBase {
     private name?: string;
     private symbol?: string;
     private decimals?: number;
-    constructor(web3: Web3) {
-      super(web3);
+    constructor(connection: Connect) {
+      super(connection);
       this.rawToAmount = this.rawToAmount.bind(this);
       this.amountToRaw = this.amountToRaw.bind(this);
     }
@@ -84,7 +84,8 @@ export class TokenContract extends ContractBase {
       if (!await this.contractExist(tokenAddress)) {
         throw new ContractCallError(`Token contract '${tokenAddress}' not found. Make sure metamask is connected to the right network`, null);
       }
-      this.contract = await new this.web3.eth.Contract(FerrumJson.abi as any, tokenAddress);
+      const web3 = this.connection.web3()!;
+      this.contract = await new web3.eth.Contract(FerrumJson.abi as any, tokenAddress);
       this.name = await this.contract.methods.name.call().call();
       this.symbol = await this.contract.methods.symbol.call().call();
       this.decimals = await this.contract.methods.decimals.call().call();

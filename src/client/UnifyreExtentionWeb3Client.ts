@@ -5,6 +5,7 @@ import { CustomTransactionCallRequest, CustomTransactionCallResponse, SendMoneyR
 import { AppLinkRequest } from "unifyre-extension-sdk/dist/client/model/AppLink";
 import { AddressDetails, AppUserProfile, UserAccountGroup } from "unifyre-extension-sdk/dist/client/model/AppUserProfile";
 import { CurrencyList } from "./CurrencyList";
+import { TransactionConfig, RLPEncodedTransaction } from 'web3-eth';
 
 export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     constructor(private appId: string, private currencyList: CurrencyList,
@@ -24,7 +25,7 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
 
     async getUserProfile(): Promise<AppUserProfile> {
         // Cretate a user profile. And get token fetches for addresses.
-        const userAddress = this.connection.account()!; 
+        const userAddress = this.connection.account() || '';
         ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
         const addressesF = this.currencyList.get().map(async c => {
             const [network, tokenAddr] = c.split(':');
@@ -32,7 +33,7 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
             return {
                 address: userAddress,
                 addressType: 'ADDRESS',
-                balance: await token.balanceOf(userAddress),
+                balance: !!userAddress ? await token.balanceOf(userAddress) : '0',
                 currency: c,
                 humanReadableAddress: userAddress,
                 network,
@@ -74,9 +75,30 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         throw new Error("Method not implemented.");
     }
 
-    async sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[]): Promise<string> {
+    async sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[]):
+    Promise<string> {
         // Sign and send transaction. Return transaction IDs joined with comma
-        throw new Error("Method not implemented.");
+        ValidationUtils.isTrue(!!transactions && !!transactions.length, '"transactions" must be provided');
+        const web3 = this.connection.web3()!;
+        const signedOnes: RLPEncodedTransaction[] = [];
+        for (const tx of transactions) {
+            const signed = await web3.eth.signTransaction({
+                ...tx,
+                gas: tx.gas?.gasLimit,
+                gasPrice: tx.gas?.gasPrice,
+                chainId: this.connection.netId()
+            } as TransactionConfig);
+            signedOnes.push(signed);
+        }
+        const txIds: string[] = [];
+        for (const tx of signedOnes) {
+            const res = await web3.eth.sendSignedTransaction(tx.raw);
+            ValidationUtils.isTrue(!!res && !!res.transactionHash,
+                'Error broadcasting transaction. No transaction ID was genearted');
+            txIds.push(res.transactionHash);
+        }
+        // We should return a request ID. In this case we just return tx IDs as the request ID
+        return txIds.join(',');
     }
 
     async getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse> {
@@ -91,6 +113,6 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     }
 
     getTransaction(transactionId: string): Promise<any> {
-        throw new Error("Method not implemented.");
+        return this.connection.web3()!.eth.getTransaction(transactionId);
     }
 }

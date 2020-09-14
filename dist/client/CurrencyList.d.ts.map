@@ -1,0 +1,1 @@
+{"version":3,"file":"CurrencyList.d.ts","sourceRoot":"","sources":["../../src/client/CurrencyList.ts"],"names":[],"mappings":"AACA,qBAAa,YAAY;IACrB,OAAO,CAAC,UAAU,CAAW;gBACjB,UAAU,EAAE,MAAM,EAAE;IAIhC,GAAG;IAEH,GAAG,CAAC,UAAU,EAAE,MAAM,EAAE;CAG3B"}

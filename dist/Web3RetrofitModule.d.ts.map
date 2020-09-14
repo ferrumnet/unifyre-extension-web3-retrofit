@@ -1,0 +1,1 @@
+{"version":3,"file":"Web3RetrofitModule.d.ts","sourceRoot":"","sources":["../src/Web3RetrofitModule.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,EAAE,MAAM,iBAAiB,CAAC;AAMpD,qBAAa,kBAAmB,YAAW,MAAM;IACjC,OAAO,CAAC,KAAK;IAAU,OAAO,CAAC,iBAAiB;gBAAxC,KAAK,EAAE,MAAM,EAAU,iBAAiB,EAAE,MAAM,EAAE;IAGhE,WAAW,CAAC,CAAC,EAAE,SAAS,GAAG,OAAO,CAAC,IAAI,CAAC;CAQjD"}

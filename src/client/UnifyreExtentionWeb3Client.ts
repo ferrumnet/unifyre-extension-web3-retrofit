@@ -75,7 +75,8 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         throw new Error("Method not implemented.");
     }
 
-    async sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[]):
+    async sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[],
+        payload?: any):
     Promise<string> {
         // Sign and send transaction. Return transaction IDs joined with comma
         ValidationUtils.isTrue(!!transactions && !!transactions.length, '"transactions" must be provided');

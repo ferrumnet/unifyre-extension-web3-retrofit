@@ -81,7 +81,7 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
     getSendMoneyResponse(requestId) {
         throw new Error("Method not implemented.");
     }
-    sendTransactionAsync(network, transactions) {
+    sendTransactionAsync(network, transactions, payload) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             // Sign and send transaction. Return transaction IDs joined with comma

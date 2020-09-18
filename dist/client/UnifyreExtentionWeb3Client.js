@@ -82,35 +82,47 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
         throw new Error("Method not implemented.");
     }
     sendTransactionAsync(network, transactions, payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             // Sign and send transaction. Return transaction IDs joined with comma
             ferrum_plumbing_1.ValidationUtils.isTrue(!!transactions && !!transactions.length, '"transactions" must be provided');
             const web3 = this.connection.web3();
-            const signedOnes = [];
-            for (const tx of transactions) {
-                const signed = yield web3.eth.signTransaction(Object.assign(Object.assign({}, tx), { gas: (_a = tx.gas) === null || _a === void 0 ? void 0 : _a.gasLimit, gasPrice: (_b = tx.gas) === null || _b === void 0 ? void 0 : _b.gasPrice, chainId: this.connection.netId() }));
-                signedOnes.push(signed);
-            }
             const txIds = [];
-            for (const tx of signedOnes) {
-                const res = yield web3.eth.sendSignedTransaction(tx.raw);
-                ferrum_plumbing_1.ValidationUtils.isTrue(!!res && !!res.transactionHash, 'Error broadcasting transaction. No transaction ID was genearted');
-                txIds.push(res.transactionHash);
+            for (const tx of transactions) {
+                const txId = yield new Promise((resolve, reject) => {
+                    var _a;
+                    return web3.eth.sendTransaction({
+                        from: tx.from,
+                        to: tx.contract,
+                        value: '0x',
+                        data: tx.data,
+                        gas: (_a = tx.gas) === null || _a === void 0 ? void 0 : _a.gasLimit,
+                    }, (e, h) => {
+                        if (!!e) {
+                            reject(e);
+                        }
+                        else {
+                            resolve(h);
+                        }
+                    }).catch(reject);
+                });
+                txIds.push(txId);
             }
             // We should return a request ID. In this case we just return tx IDs as the request ID
-            return txIds.join(',');
+            return txIds.join(',') + '|' + JSON.stringify(payload || '');
         });
     }
     getSendTransactionResponse(requestId, timeout) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!requestId, '"requestId" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(requestId.startsWith('0x') || requestId.startsWith('0X'), 'Invalid web3 request ID');
-            const txIds = requestId.split(',');
+            const [txIdPart, payloadPart] = requestId.split('|');
+            const txIds = txIdPart.split(',');
+            const requestPayload = JSON.parse(payloadPart);
             return {
                 rejected: false,
                 requestId: requestId,
                 response: txIds.map(tid => ({ transactionId: tid })),
+                requestPayload,
             };
         });
     }

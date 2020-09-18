@@ -5,7 +5,7 @@ import { CustomTransactionCallRequest, CustomTransactionCallResponse, SendMoneyR
 import { AppLinkRequest } from "unifyre-extension-sdk/dist/client/model/AppLink";
 import { AddressDetails, AppUserProfile, UserAccountGroup } from "unifyre-extension-sdk/dist/client/model/AppUserProfile";
 import { CurrencyList } from "./CurrencyList";
-import { TransactionConfig, RLPEncodedTransaction } from 'web3-eth';
+import { TransactionConfig, TransactionReceipt } from 'web3-eth';
 
 export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     constructor(private appId: string, private currencyList: CurrencyList,
@@ -81,35 +81,40 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         // Sign and send transaction. Return transaction IDs joined with comma
         ValidationUtils.isTrue(!!transactions && !!transactions.length, '"transactions" must be provided');
         const web3 = this.connection.web3()!;
-        const signedOnes: RLPEncodedTransaction[] = [];
-        for (const tx of transactions) {
-            const signed = await web3.eth.signTransaction({
-                ...tx,
-                gas: tx.gas?.gasLimit,
-                gasPrice: tx.gas?.gasPrice,
-                chainId: this.connection.netId()
-            } as TransactionConfig);
-            signedOnes.push(signed);
-        }
         const txIds: string[] = [];
-        for (const tx of signedOnes) {
-            const res = await web3.eth.sendSignedTransaction(tx.raw);
-            ValidationUtils.isTrue(!!res && !!res.transactionHash,
-                'Error broadcasting transaction. No transaction ID was genearted');
-            txIds.push(res.transactionHash);
+        for (const tx of transactions) {
+            const txId = await new Promise<string>((resolve, reject) => web3.eth.sendTransaction({
+                from: tx.from,
+                to: tx.contract,
+                value: '0x',
+                data: tx.data,
+                gas: tx.gas?.gasLimit,
+                // gasPrice: tx.gas?.gasPrice,
+                // chainId: this.connection.netId()
+            } as TransactionConfig,
+            (e, h) => {
+                if (!!e) { reject(e) } else {
+                    resolve(h);
+                }
+            }).catch(reject)
+            );
+            txIds.push(txId);
         }
         // We should return a request ID. In this case we just return tx IDs as the request ID
-        return txIds.join(',');
+        return txIds.join(',') + '|' + JSON.stringify(payload || '');
     }
 
     async getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse> {
         ValidationUtils.isTrue(!!requestId, '"requestId" must be provided');
         ValidationUtils.isTrue(requestId.startsWith('0x') || requestId.startsWith('0X'), 'Invalid web3 request ID');
-        const txIds = requestId.split(',');
+        const [txIdPart, payloadPart] = requestId.split('|');
+        const txIds = txIdPart.split(',');
+        const requestPayload = JSON.parse(payloadPart);
         return {
             rejected: false,
             requestId: requestId,
             response: txIds.map(tid => ({ transactionId: tid } as SendMoneyResponse)),
+            requestPayload,
         } as CustomTransactionCallResponse;
     }
 

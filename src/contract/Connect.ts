@@ -12,8 +12,11 @@ export class Connect implements Injectable {
         // @ts-ignore
         const win = window as any || {};
         if (win.ethereum) {
+            console.log('USING WIN ETH')
             this._web3 = new Web3(win.ethereum);
             await win.ethereum.enable();
+            console.log('WIN ETH DET', this._web3.eth)
+            win.shambal = this._web3;
         } else if (win.web3) {
             this._web3 = new Web3(win.web3.currentProvider);
         } else {
@@ -21,7 +24,8 @@ export class Connect implements Injectable {
             throw error;
         }
         this._netId = await this._web3.eth.net.getId();
-        const account = this._web3.defaultAccount;
+        const accounts = await this._web3.eth.getAccounts();
+        const account = accounts[0];
         ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
         this._account = account!;
     }

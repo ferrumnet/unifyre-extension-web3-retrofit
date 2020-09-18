@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.currencylist = void 0;
-class currencylist {
+exports.CurrencyList = void 0;
+class CurrencyList {
     constructor(currencies) {
         this.currencies = [...currencies];
     }
@@ -11,5 +11,5 @@ class currencylist {
         this.currencies = [...currencies];
     }
 }
-exports.currencylist = currencylist;
+exports.CurrencyList = CurrencyList;
 //# sourceMappingURL=CurrencyList.js.map

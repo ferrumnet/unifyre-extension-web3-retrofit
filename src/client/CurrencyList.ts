@@ -1,6 +1,6 @@
 import { Injectable } from "ferrum-plumbing";
 
-export class currencylist implements Injectable {
+export class CurrencyList implements Injectable {
     private currencies: string[];
     constructor(currencies: string[]) {
         this.currencies = [...currencies];

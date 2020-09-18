@@ -1,6 +1,8 @@
-export declare class CurrencyList {
+import { Injectable } from "ferrum-plumbing";
+export declare class currencylist implements Injectable {
     private currencies;
     constructor(currencies: string[]);
+    __name__(): string;
     get(): string[];
     set(currencies: string[]): void;
 }

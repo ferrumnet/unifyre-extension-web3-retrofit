@@ -51,7 +51,7 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         const up = {
             appId: this.appId,
             displayName: '',
-            userId: '...',
+            userId: userAddress,
             accountGroups: [
                 ag
             ]

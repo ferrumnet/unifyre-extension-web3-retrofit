@@ -41,7 +41,7 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
                 const [network, tokenAddr] = c.split(':');
                 const token = yield this.tokenFac.forToken(tokenAddr);
                 return {
-                    address: userAddress,
+                    address: userAddress.toLocaleLowerCase(),
                     addressType: 'ADDRESS',
                     balance: !!userAddress ? yield token.balanceOf(userAddress) : '0',
                     currency: c,

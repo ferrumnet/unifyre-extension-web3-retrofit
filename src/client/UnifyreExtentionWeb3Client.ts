@@ -31,7 +31,7 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
             const [network, tokenAddr] = c.split(':');
             const token = await this.tokenFac.forToken(tokenAddr);
             return {
-                address: userAddress,
+                address: userAddress.toLocaleLowerCase(),
                 addressType: 'ADDRESS',
                 balance: !!userAddress ? await token.balanceOf(userAddress) : '0',
                 currency: c,

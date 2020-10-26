@@ -5,7 +5,7 @@ import { CustomTransactionCallRequest, CustomTransactionCallResponse, SendMoneyR
 import { AppLinkRequest } from "unifyre-extension-sdk/dist/client/model/AppLink";
 import { AddressDetails, AppUserProfile, UserAccountGroup } from "unifyre-extension-sdk/dist/client/model/AppUserProfile";
 import { CurrencyList } from "./CurrencyList";
-import { TransactionConfig, TransactionReceipt } from 'web3-eth';
+import { TransactionConfig } from 'web3-eth';
 
 export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     constructor(private appId: string, private currencyList: CurrencyList,

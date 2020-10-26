@@ -20,21 +20,10 @@ class Connect {
     __name__() { return 'Connect'; }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
-            // @ts-ignore
-            const win = window || {};
-            if (win.ethereum) {
-                console.log('USING WIN ETH');
-                this._web3 = new web3_1.default(win.ethereum);
-                yield win.ethereum.enable();
-                console.log('WIN ETH DET', this._web3.eth);
-                win.shambal = this._web3;
-            }
-            else if (win.web3) {
-                this._web3 = new web3_1.default(win.web3.currentProvider);
-            }
-            else {
-                const error = 'Metamask Not Detected';
-                throw error;
+            const prov = this.getProvider();
+            this._web3 = new web3_1.default(prov);
+            if (prov.enable) {
+                yield prov.enable();
             }
             this._netId = yield this._web3.eth.net.getId();
             const accounts = yield this._web3.eth.getAccounts();
@@ -42,6 +31,30 @@ class Connect {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
             this._account = account;
         });
+    }
+    clearProvider() {
+        this._provider = undefined;
+    }
+    setProvider(prov) {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!prov, '"provider" must be provided');
+        this._provider = prov;
+    }
+    getProvider() {
+        if (!this._provider) {
+            // @ts-ignore
+            const win = window || {};
+            if (win.ethereum) {
+                this._provider = win.ethereum;
+            }
+            else if (win.web3) {
+                this._provider = win.web3.currentProvider;
+            }
+            else {
+                const error = 'No Web3 provider such as Metamask was detected';
+                throw error;
+            }
+        }
+        return this._provider;
     }
     web3() {
         return this._web3;

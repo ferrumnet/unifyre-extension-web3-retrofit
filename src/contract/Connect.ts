@@ -101,6 +101,7 @@ export class Connect implements Injectable {
 
     async connect() {
         const prov = this._provider!;
+        await prov.connect();
         this._netId = await prov.netId();
         const accounts = await prov.getAccounts();
         return accounts[0];

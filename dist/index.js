@@ -14,5 +14,7 @@ __exportStar(require("./Web3RetrofitModule"), exports);
 __exportStar(require("./client/CurrencyList"), exports);
 __exportStar(require("./client/UnifyreExtentionWeb3Client"), exports);
 __exportStar(require("./contract/DeployContract"), exports);
+__exportStar(require("./contract/Connect"), exports);
 __exportStar(require("./contract/Contract"), exports);
+__exportStar(require("./contract/WalletConnectWeb3Provider"), exports);
 //# sourceMappingURL=index.js.map

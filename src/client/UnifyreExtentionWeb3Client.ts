@@ -20,7 +20,7 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
      * Connects to metamask
      */
     async signInWithToken(_: string): Promise<void> {
-        return this.connection.connect();
+        await this.connection.connect();
     }
 
     async getUserProfile(): Promise<AppUserProfile> {
@@ -80,10 +80,10 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     Promise<string> {
         // Sign and send transaction. Return transaction IDs joined with comma
         ValidationUtils.isTrue(!!transactions && !!transactions.length, '"transactions" must be provided');
-        const web3 = this.connection.web3()!;
         const txIds: string[] = [];
         for (const tx of transactions) {
-            const txId = await new Promise<string>((resolve, reject) => web3.eth.sendTransaction({
+            const txId = await new Promise<string>((resolve, reject) =>
+            this.connection.getProvider()!.sendTransaction({
                 from: tx.from,
                 to: tx.contract,
                 value: '0x',
@@ -91,12 +91,8 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
                 gas: tx.gas?.gasLimit,
                 // gasPrice: tx.gas?.gasPrice,
                 // chainId: this.connection.netId()
-            } as TransactionConfig,
-            (e, h) => {
-                if (!!e) { reject(e) } else {
-                    resolve(h);
-                }
-            }).catch(reject)
+            } as TransactionConfig)
+            .then(h => resolve(h)).catch(reject)
             );
             txIds.push(txId);
         }
@@ -119,6 +115,6 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     }
 
     getTransaction(transactionId: string): Promise<any> {
-        return this.connection.web3()!.eth.getTransaction(transactionId);
+        return this.connection.getProvider()!.web3()!.eth.getTransaction(transactionId);
     }
 }

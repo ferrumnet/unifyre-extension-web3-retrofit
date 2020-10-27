@@ -9,6 +9,7 @@ export declare class Connect implements Injectable {
     constructor();
     __name__(): string;
     connect(): Promise<void>;
+    disconnect(): Promise<void>;
     clearProvider(): void;
     setProvider(prov: provider): void;
     private getProvider;

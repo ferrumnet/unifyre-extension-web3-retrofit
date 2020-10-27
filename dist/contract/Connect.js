@@ -32,6 +32,14 @@ class Connect {
             this._account = account;
         });
     }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prov = this.getProvider();
+            if (prov.disconnet) {
+                yield prov.disconnet();
+            }
+        });
+    }
     clearProvider() {
         this._provider = undefined;
     }

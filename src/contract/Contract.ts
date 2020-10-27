@@ -20,7 +20,7 @@ class ContractBase {
     }
   
     async contractExist(contractAddress: string) {
-      const code = await this.connection.web3()!.eth.getCode(contractAddress);
+      const code = await this.connection.getProvider()!.web3()!.eth.getCode(contractAddress);
       return code.length > 4;
     }
   
@@ -84,7 +84,7 @@ export class TokenContract extends ContractBase {
       if (!await this.contractExist(tokenAddress)) {
         throw new ContractCallError(`Token contract '${tokenAddress}' not found. Make sure metamask is connected to the right network`, null);
       }
-      const web3 = this.connection.web3()!;
+      const web3 = this.connection.getProvider()!.web3()!;
       this.contract = await new web3.eth.Contract(FerrumJson.abi as any, tokenAddress);
       this.name = await this.contract.methods.name.call().call();
       this.symbol = await this.contract.methods.symbol.call().call();

@@ -1,19 +1,26 @@
 import { Injectable } from "ferrum-plumbing";
-import { provider } from 'web3-core';
 import Web3 from "web3";
+import { TransactionConfig } from 'web3-eth';
+export interface Web3Provider {
+    connect(): Promise<void>;
+    disconnect(): Promise<void>;
+    connected(): boolean;
+    addEventListener(event: 'disconnect', fun: (reason: string) => void): void;
+    netId(): Promise<number>;
+    getAccounts(): Promise<string[]>;
+    web3(): Web3 | undefined;
+    sendTransaction(tx: TransactionConfig): Promise<string>;
+}
 export declare class Connect implements Injectable {
-    private _web3?;
     private _netId?;
     private _account?;
     private _provider?;
     constructor();
     __name__(): string;
-    connect(): Promise<void>;
-    disconnect(): Promise<void>;
-    clearProvider(): void;
-    setProvider(prov: provider): void;
-    private getProvider;
-    web3(): Web3 | undefined;
+    connect(): Promise<string>;
+    setProvider(prov: Web3Provider): void;
+    getProvider(): Web3Provider | undefined;
+    connected(): boolean | undefined;
     netId(): number | undefined;
     network(): "ETHEREUM" | "RINKEBY" | undefined;
     account(): string | undefined;

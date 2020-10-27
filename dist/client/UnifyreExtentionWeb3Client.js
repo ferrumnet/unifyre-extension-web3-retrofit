@@ -29,7 +29,7 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
      */
     signInWithToken(_) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.connection.connect();
+            yield this.connection.connect();
         });
     }
     getUserProfile() {
@@ -85,25 +85,18 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
         return __awaiter(this, void 0, void 0, function* () {
             // Sign and send transaction. Return transaction IDs joined with comma
             ferrum_plumbing_1.ValidationUtils.isTrue(!!transactions && !!transactions.length, '"transactions" must be provided');
-            const web3 = this.connection.web3();
             const txIds = [];
             for (const tx of transactions) {
                 const txId = yield new Promise((resolve, reject) => {
                     var _a;
-                    return web3.eth.sendTransaction({
+                    return this.connection.getProvider().sendTransaction({
                         from: tx.from,
                         to: tx.contract,
                         value: '0x',
                         data: tx.data,
                         gas: (_a = tx.gas) === null || _a === void 0 ? void 0 : _a.gasLimit,
-                    }, (e, h) => {
-                        if (!!e) {
-                            reject(e);
-                        }
-                        else {
-                            resolve(h);
-                        }
-                    }).catch(reject);
+                    })
+                        .then(h => resolve(h)).catch(reject);
                 });
                 txIds.push(txId);
             }
@@ -127,7 +120,7 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
         });
     }
     getTransaction(transactionId) {
-        return this.connection.web3().eth.getTransaction(transactionId);
+        return this.connection.getProvider().web3().eth.getTransaction(transactionId);
     }
 }
 exports.UnifyreExtensionWeb3Client = UnifyreExtensionWeb3Client;

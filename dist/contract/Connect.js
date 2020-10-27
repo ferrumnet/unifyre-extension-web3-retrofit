@@ -15,9 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Connect = void 0;
 const ferrum_plumbing_1 = require("ferrum-plumbing");
 const web3_1 = __importDefault(require("web3"));
-class Connect {
-    constructor() { }
-    __name__() { return 'Connect'; }
+class MetamaskProvider {
+    constructor() {
+        this._conneted = false;
+    }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             const prov = this.getProvider();
@@ -25,27 +26,57 @@ class Connect {
             if (prov.enable) {
                 yield prov.enable();
             }
-            this._netId = yield this._web3.eth.net.getId();
+            this._conneted = true;
+        });
+    }
+    netId() {
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
+            return yield this._web3.eth.net.getId();
+        });
+    }
+    getAccounts() {
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
             const accounts = yield this._web3.eth.getAccounts();
             const account = accounts[0];
             ferrum_plumbing_1.ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
-            this._account = account;
+            return accounts;
         });
     }
     disconnect() {
         return __awaiter(this, void 0, void 0, function* () {
-            const prov = this.getProvider();
-            if (prov.disconnet) {
-                yield prov.disconnet();
-            }
+            return;
         });
     }
-    clearProvider() {
-        this._provider = undefined;
+    connected() {
+        return this._conneted;
     }
-    setProvider(prov) {
-        ferrum_plumbing_1.ValidationUtils.isTrue(!!prov, '"provider" must be provided');
-        this._provider = prov;
+    addEventListener(_, fun) {
+        // @ts-ignore
+        if (window.ethereum) {
+            // @ts-ignore
+            window.ethereum.on('accountsChanged', () => {
+                this._conneted = false;
+                fun('Account disconnected or changed');
+            });
+        }
+    }
+    web3() {
+        return this._web3;
+    }
+    sendTransaction(tx) {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
+        return new Promise((resolve, reject) => {
+            this._web3.eth.sendTransaction(tx, (e, h) => {
+                if (!!e) {
+                    reject(e);
+                }
+                else {
+                    resolve(h);
+                }
+            }).catch(reject);
+        });
     }
     getProvider() {
         if (!this._provider) {
@@ -64,8 +95,30 @@ class Connect {
         }
         return this._provider;
     }
-    web3() {
-        return this._web3;
+}
+class Connect {
+    constructor() {
+        this._provider = new MetamaskProvider();
+    }
+    __name__() { return 'Connect'; }
+    connect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prov = this._provider;
+            this._netId = yield prov.netId();
+            const accounts = yield prov.getAccounts();
+            return accounts[0];
+        });
+    }
+    setProvider(prov) {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!prov, '"provider" must be provided');
+        this._provider = prov;
+    }
+    getProvider() {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!this._provider, 'Make sure to initialize before using "getProvider"');
+        return this._provider;
+    }
+    connected() {
+        return this._provider && this.getProvider().connected();
     }
     netId() {
         return this._netId;

@@ -34,7 +34,7 @@ class ContractBase {
     }
     contractExist(contractAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            const code = yield this.connection.web3().eth.getCode(contractAddress);
+            const code = yield this.connection.getProvider().web3().eth.getCode(contractAddress);
             return code.length > 4;
         });
     }
@@ -96,7 +96,7 @@ class TokenContract extends ContractBase {
             if (!(yield this.contractExist(tokenAddress))) {
                 throw new ContractCallError(`Token contract '${tokenAddress}' not found. Make sure metamask is connected to the right network`, null);
             }
-            const web3 = this.connection.web3();
+            const web3 = this.connection.getProvider().web3();
             this.contract = yield new web3.eth.Contract(FerrumToken_json_1.default.abi, tokenAddress);
             this.name = yield this.contract.methods.name.call().call();
             this.symbol = yield this.contract.methods.symbol.call().call();

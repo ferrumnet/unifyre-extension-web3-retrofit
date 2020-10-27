@@ -16,7 +16,16 @@ exports.WalletConnectWeb3Provider = void 0;
 const client_1 = __importDefault(require("@walletconnect/client"));
 const qrcode_modal_1 = __importDefault(require("@walletconnect/qrcode-modal"));
 const ferrum_plumbing_1 = require("ferrum-plumbing");
+const web3_1 = __importDefault(require("web3"));
+const CHAIN_ID_MAP = {
+    1: 'ETHEREUM',
+    4: 'RINKEBY',
+};
 class WalletConnectWeb3Provider {
+    constructor(web3Providers) {
+        this.web3Providers = web3Providers;
+    }
+    __name__() { return 'WalletConnectWeb3Provider'; }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.connector) {
@@ -39,6 +48,7 @@ class WalletConnectWeb3Provider {
                         }
                         else {
                             console.log('Wallet connect ceonnected ', payload);
+                            this.setWeb3();
                             resolve();
                         }
                     });
@@ -83,7 +93,19 @@ class WalletConnectWeb3Provider {
         return this.connector.sendTransaction(tx);
     }
     web3() {
-        throw new Error('Wallet connect provider does not support full web3 features.');
+        return this._web3;
+    }
+    setWeb3() {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!this.connector, 'Connect first');
+        if (this._web3) {
+            return;
+        }
+        const chainId = this.connector.chainId;
+        const chainName = CHAIN_ID_MAP[chainId];
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!chainName, `Selected chain with ID ${chainId} is not supported`);
+        const httpUrl = this.web3Providers[chainName];
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!httpUrl, `No http provider is set for  ${chainName}`);
+        this._web3 = new web3_1.default(new web3_1.default.providers.HttpProvider(httpUrl));
     }
 }
 exports.WalletConnectWeb3Provider = WalletConnectWeb3Provider;

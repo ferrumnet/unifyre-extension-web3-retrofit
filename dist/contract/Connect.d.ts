@@ -17,7 +17,7 @@ export declare class Connect implements Injectable {
     private _provider?;
     constructor();
     __name__(): string;
-    connect(): Promise<string>;
+    connect(): Promise<() => string | undefined>;
     setProvider(prov: Web3Provider): void;
     getProvider(): Web3Provider | undefined;
     connected(): boolean | undefined;

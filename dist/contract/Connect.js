@@ -107,7 +107,8 @@ class Connect {
             yield prov.connect();
             this._netId = yield prov.netId();
             const accounts = yield prov.getAccounts();
-            return accounts[0];
+            this._account = accounts[0];
+            return this.account;
         });
     }
     setProvider(prov) {

@@ -104,7 +104,8 @@ export class Connect implements Injectable {
         await prov.connect();
         this._netId = await prov.netId();
         const accounts = await prov.getAccounts();
-        return accounts[0];
+        this._account = accounts[0];
+        return this.account;
     }
     
     setProvider(prov: Web3Provider) {

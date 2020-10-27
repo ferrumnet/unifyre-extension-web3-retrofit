@@ -1,12 +1,23 @@
-import types from 'web3';
 import { Web3Provider } from './Connect';
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { TransactionConfig } from 'web3-eth';
-import { ValidationUtils } from 'ferrum-plumbing';
+import { Injectable, ValidationUtils } from 'ferrum-plumbing';
+import Web3 from 'web3';
 
-export class WalletConnectWeb3Provider implements Web3Provider {
+const CHAIN_ID_MAP: {[k: number]: string} = {
+    1: 'ETHEREUM',
+    4: 'RINKEBY',
+}
+
+export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
     private connector: WalletConnect | undefined;
+    private _web3: Web3 | undefined;
+    constructor(private web3Providers: {[network: string]: string}) {
+    }
+
+    __name__() { return 'WalletConnectWeb3Provider'; }
+
     async connect(): Promise<void> {
         if (this.connector) {
             // Already connected
@@ -29,6 +40,7 @@ export class WalletConnectWeb3Provider implements Web3Provider {
                         reject(error);
                     } else {
                         console.log('Wallet connect ceonnected ', payload);
+                        this.setWeb3();
                         resolve();
                     }
                 });
@@ -69,7 +81,18 @@ export class WalletConnectWeb3Provider implements Web3Provider {
         return this.connector!.sendTransaction(tx as any);
     }
 
-    web3(): types | undefined {
-        throw new Error('Wallet connect provider does not support full web3 features.');
+    web3(): Web3 | undefined {
+        return this._web3;
+    }
+
+    private setWeb3() {
+        ValidationUtils.isTrue(!!this.connector, 'Connect first');
+        if (this._web3) { return; }
+        const chainId = this.connector!.chainId;
+        const chainName = CHAIN_ID_MAP[chainId];
+        ValidationUtils.isTrue(!!chainName, `Selected chain with ID ${chainId} is not supported`);
+        const httpUrl = this.web3Providers[chainName]
+        ValidationUtils.isTrue(!!httpUrl, `No http provider is set for  ${chainName}`);
+        this._web3 = new Web3(new Web3.providers.HttpProvider(httpUrl));
     }
 }

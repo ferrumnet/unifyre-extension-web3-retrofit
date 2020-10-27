@@ -55,6 +55,9 @@ class WalletConnectWeb3Provider {
                 });
                 return connectPromise;
             }
+            else {
+                this.setWeb3();
+            }
         });
     }
     disconnect() {

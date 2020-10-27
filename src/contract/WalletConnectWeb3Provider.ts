@@ -46,6 +46,8 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
                 });
             });
             return connectPromise;
+        } else {
+            this.setWeb3();
         }
     }
 

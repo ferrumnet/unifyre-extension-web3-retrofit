@@ -19,15 +19,12 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
     __name__() { return 'WalletConnectWeb3Provider'; }
 
     async connect(): Promise<void> {
-        if (this.connector) {
-            // Already connected
-            return;
+        if (!this.connector) {
+            this.connector = new WalletConnect({
+                bridge: "https://bridge.walletconnect.org", // Required
+                qrcodeModal: QRCodeModal,
+            });
         }
-
-        this.connector = new WalletConnect({
-            bridge: "https://bridge.walletconnect.org", // Required
-            qrcodeModal: QRCodeModal,
-        });
 
         // Check if connection is already established
         if (!this.connector!.connected) {

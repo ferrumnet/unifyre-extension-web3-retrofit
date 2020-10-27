@@ -28,14 +28,12 @@ class WalletConnectWeb3Provider {
     __name__() { return 'WalletConnectWeb3Provider'; }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.connector) {
-                // Already connected
-                return;
+            if (!this.connector) {
+                this.connector = new client_1.default({
+                    bridge: "https://bridge.walletconnect.org",
+                    qrcodeModal: qrcode_modal_1.default,
+                });
             }
-            this.connector = new client_1.default({
-                bridge: "https://bridge.walletconnect.org",
-                qrcodeModal: qrcode_modal_1.default,
-            });
             // Check if connection is already established
             if (!this.connector.connected) {
                 // create new session

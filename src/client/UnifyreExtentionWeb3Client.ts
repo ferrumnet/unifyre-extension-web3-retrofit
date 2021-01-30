@@ -86,7 +86,7 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
             this.connection.getProvider()!.sendTransaction({
                 from: tx.from,
                 to: tx.contract,
-                value: '0x',
+                value: tx.value || '0x',
                 data: tx.data,
                 gas: tx.gas?.gasLimit,
                 // gasPrice: tx.gas?.gasPrice,

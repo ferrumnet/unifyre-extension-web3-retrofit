@@ -92,7 +92,7 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
                     return this.connection.getProvider().sendTransaction({
                         from: tx.from,
                         to: tx.contract,
-                        value: '0x',
+                        value: tx.value || '0x',
                         data: tx.data,
                         gas: (_a = tx.gas) === null || _a === void 0 ? void 0 : _a.gasLimit,
                     })

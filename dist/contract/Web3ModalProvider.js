@@ -56,6 +56,11 @@ class Web3ModalProvider {
     }
     disconnect() {
         return __awaiter(this, void 0, void 0, function* () {
+            return this._disconnect();
+        });
+    }
+    _disconnect(error, payload) {
+        return __awaiter(this, void 0, void 0, function* () {
             if (this._modal) {
                 this._modal.clearCachedProvider();
             }
@@ -76,6 +81,14 @@ class Web3ModalProvider {
             this._modal = undefined;
             this._provider = undefined;
             this._web3 = undefined;
+            const onDisc = this._onDisconnect;
+            this._onDisconnect = undefined;
+            if (error && this._onDisconnect) {
+                onDisc(error === null || error === void 0 ? void 0 : error.message);
+            }
+            else {
+                onDisc(payload);
+            }
         });
     }
     connected() {
@@ -89,17 +102,12 @@ class Web3ModalProvider {
         return this._connected;
     }
     addEventListener(event, fun) {
+        this._onDisconnect = fun;
         const prov = this._provider;
         if (prov) {
             prov.on("close", (error, payload) => {
                 console.error('Provider disconnected', error);
-                this.disconnect();
-                if (error) {
-                    fun(error === null || error === void 0 ? void 0 : error.message);
-                }
-                else {
-                    fun(payload);
-                }
+                this._disconnect(error, payload);
             });
         }
     }

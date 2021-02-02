@@ -13,6 +13,7 @@ export class Web3ModalProvider implements Web3Provider {
     private _provider: provider | undefined;
     private _web3: Web3 | undefined;
     private _connected: boolean = false;
+    private _onDisconnect: any;
 
     constructor(private web3Providers: {[network: string]: string}) {
     }
@@ -50,6 +51,11 @@ export class Web3ModalProvider implements Web3Provider {
     }
 
     async disconnect(): Promise<void> {
+        return this._disconnect();
+    }
+
+    private async _disconnect(error?: Error, payload?: any): Promise<void> {
+
         if (this._modal) {
             this._modal!.clearCachedProvider();
         }
@@ -69,7 +75,15 @@ export class Web3ModalProvider implements Web3Provider {
         this._modal = undefined;
         this._provider = undefined;
         this._web3 = undefined;
+        const onDisc = this._onDisconnect;
+        this._onDisconnect = undefined;
+        if (error && this._onDisconnect) {
+            onDisc(error?.message);
+        } else {
+            onDisc(payload);
+        }
     }
+
 
     connected(): boolean {
         if (!this._provider) { return false; }
@@ -82,16 +96,12 @@ export class Web3ModalProvider implements Web3Provider {
     }
 
     addEventListener(event: "disconnect", fun: (reason: string) => void): void {
+        this._onDisconnect = fun;
         const prov = this._provider as any;
         if (prov) {
             prov.on("close", (error: any, payload: any) => {
                 console.error('Provider disconnected', error);
-                this.disconnect();
-                if (error) {
-                    fun(error?.message);
-                } else {
-                    fun(payload);
-                }
+                this._disconnect(error, payload);
             });
         }
     }

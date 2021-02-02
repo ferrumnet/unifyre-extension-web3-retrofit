@@ -84,12 +84,9 @@ class WalletConnectWeb3Provider {
         });
     }
     getAccounts() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
-            const accounts = yield this._web3.eth.getAccounts();
-            const account = accounts[0];
-            ferrum_plumbing_1.ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
-            return accounts;
+            return ((_a = this.connector) === null || _a === void 0 ? void 0 : _a.accounts) || [];
         });
     }
     sendTransaction(tx) {

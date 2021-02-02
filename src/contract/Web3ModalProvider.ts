@@ -99,8 +99,12 @@ export class Web3ModalProvider implements Web3Provider {
         return await this._web3!.eth.net.getId();
     }
 
-    getAccounts(): Promise<string[]> {
-        throw new Error("Method not implemented.");
+    async getAccounts(): Promise<string[]> {
+        ValidationUtils.isTrue(!!this._web3, 'Connect first');
+        const accounts = await this._web3!.eth.getAccounts();
+        const account = accounts[0];
+        ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
+        return accounts;
     }
 
     web3(): types | undefined {

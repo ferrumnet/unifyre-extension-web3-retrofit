@@ -108,7 +108,13 @@ class Web3ModalProvider {
         });
     }
     getAccounts() {
-        throw new Error("Method not implemented.");
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
+            const accounts = yield this._web3.eth.getAccounts();
+            const account = accounts[0];
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
+            return accounts;
+        });
     }
     web3() {
         return this._web3;

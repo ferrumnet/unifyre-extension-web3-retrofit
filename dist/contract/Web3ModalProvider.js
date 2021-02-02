@@ -62,7 +62,9 @@ class Web3ModalProvider {
             if (this._provider) {
                 const prov = this._provider;
                 try {
-                    yield prov.close();
+                    if (prov.close) {
+                        yield prov.close();
+                    }
                     if (prov.connection && prov.connection.isWalletConnect) {
                         yield prov.connection._walletConnector.killSession();
                     }

@@ -56,7 +56,9 @@ export class Web3ModalProvider implements Web3Provider {
         if (this._provider) {
             const prov = this._provider as any;
             try {
-                await prov.close();
+                if (prov.close) {
+                    await prov.close();
+                }
                 if (prov.connection && prov.connection.isWalletConnect) {
                     await prov.connection._walletConnector.killSession();
                 }

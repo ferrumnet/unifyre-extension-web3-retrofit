@@ -83,11 +83,13 @@ class Web3ModalProvider {
             this._web3 = undefined;
             const onDisc = this._onDisconnect;
             this._onDisconnect = undefined;
-            if (error && this._onDisconnect) {
-                onDisc(error === null || error === void 0 ? void 0 : error.message);
-            }
-            else {
-                onDisc(payload);
+            if (onDisc) {
+                if (error) {
+                    onDisc(error === null || error === void 0 ? void 0 : error.message);
+                }
+                else {
+                    onDisc(payload);
+                }
             }
         });
     }

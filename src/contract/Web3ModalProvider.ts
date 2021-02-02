@@ -77,13 +77,14 @@ export class Web3ModalProvider implements Web3Provider {
         this._web3 = undefined;
         const onDisc = this._onDisconnect;
         this._onDisconnect = undefined;
-        if (error && this._onDisconnect) {
-            onDisc(error?.message);
-        } else {
-            onDisc(payload);
+        if (onDisc) {
+            if (error) {
+                onDisc(error?.message);
+            } else {
+                onDisc(payload);
+            }
         }
     }
-
 
     connected(): boolean {
         if (!this._provider) { return false; }

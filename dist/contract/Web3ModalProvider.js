@@ -53,9 +53,11 @@ class Web3ModalProvider {
         return {
             walletconnect: {
                 package: web3_provider_1.default,
-                rpc: {
-                    1: this.web3Providers['ETHEREUM'],
-                    4: this.web3Providers['RINKEBY'],
+                options: {
+                    rpc: {
+                        1: this.web3Providers['ETHEREUM'],
+                        4: this.web3Providers['RINKEBY'],
+                    }
                 }
             },
         };

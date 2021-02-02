@@ -48,9 +48,11 @@ export class Web3ModalProvider implements Web3Provider {
         return {
             walletconnect: {
               package: WalletConnectProvider,
-              rpc: {
-                  1: this.web3Providers['ETHEREUM'],
-                  4: this.web3Providers['RINKEBY'],
+              options: {
+                rpc: {
+                    1: this.web3Providers['ETHEREUM'],
+                    4: this.web3Providers['RINKEBY'],
+                }
               }
             },
         };

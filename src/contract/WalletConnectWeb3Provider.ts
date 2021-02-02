@@ -72,7 +72,11 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
     }
 
     async getAccounts(): Promise<string[]> {
-        return this.connector?.accounts || [];
+        ValidationUtils.isTrue(!!this._web3, 'Connect first');
+        const accounts = await this._web3!.eth.getAccounts();
+        const account = accounts[0];
+        ValidationUtils.isTrue(!!account, 'There is no default account selected for metamask');
+        return accounts;
     }
 
     sendTransaction(tx: TransactionConfig) {

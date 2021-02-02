@@ -48,6 +48,11 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
         }
     }
 
+    isCached() {
+        // TODO: Get from the session cache
+        return false;
+    }
+
     async disconnect(): Promise<void> {
         await this.connector!.killSession();
     }

@@ -25,34 +25,40 @@ class Web3ModalProvider {
     }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._modal = new web3modal_1.default({
-                // network: "mainnet", 
-                cacheProvider: true,
-                providerOptions: this.providerOptions(),
-            });
-            this._provider = yield this._modal.connect();
+            const modal = this.getModal();
+            if (modal.cachedProvider) {
+                this._provider = modal.cachedProvider;
+            }
+            else {
+                this._provider = yield modal.connect();
+            }
             this._web3 = new web3_1.default(this._provider);
             this.initWeb3();
             this.subscribeProvider();
             this._connected = true;
         });
     }
+    isCached() {
+        return !!this.getModal().cachedProvider;
+    }
+    getModal() {
+        this._modal = this._modal || new web3modal_1.default({
+            // network: "mainnet", 
+            cacheProvider: true,
+            providerOptions: this.providerOptions(),
+        });
+        return this._modal;
+    }
     providerOptions() {
         return {
             walletconnect: {
                 package: web3_provider_1.default,
-                options: {
-                    // Mikko's test key - don't copy as your mileage may vary
-                    infuraId: "8043bb2cf99347b1bfadfb233c5325c0",
+                rpc: {
+                    1: this.web3Providers['ETHEREUM'],
+                    4: this.web3Providers['RINKEBY'],
                 }
             },
         };
-        // fortmatic: {
-        //   package: Fortmatic,
-        //   options: {
-        //     // Mikko's TESTNET api key
-        //     key: "pk_test_391E26A3B43A3350"
-        //   }
     }
     disconnect() {
         return __awaiter(this, void 0, void 0, function* () {

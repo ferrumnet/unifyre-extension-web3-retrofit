@@ -19,35 +19,41 @@ export class Web3ModalProvider implements Web3Provider {
     }
 
     async connect(): Promise<void> {
-        this._modal = new Web3Modal({
-            // network: "mainnet", 
-            cacheProvider: true, 
-            providerOptions: this.providerOptions() as any,
-          });
-
-        this._provider = await this._modal.connect();
+        const modal = this.getModal();
+        if (modal.cachedProvider) {
+            this._provider = modal.cachedProvider;
+        } else {
+            this._provider = await modal.connect();
+        }
         this._web3 = new Web3(this._provider!);
         this.initWeb3();
         this.subscribeProvider();
         this._connected = true;
     }
 
+    isCached() {
+        return !!this.getModal().cachedProvider;
+    }
+
+    private getModal() {
+        this._modal = this._modal || new Web3Modal({
+            // network: "mainnet", 
+            cacheProvider: true, 
+            providerOptions: this.providerOptions() as any,
+          });
+        return this._modal!;
+    }
+
     private providerOptions() {
         return {
             walletconnect: {
               package: WalletConnectProvider,
-              options: {
-                // Mikko's test key - don't copy as your mileage may vary
-                infuraId: "8043bb2cf99347b1bfadfb233c5325c0",
+              rpc: {
+                  1: this.web3Providers['ETHEREUM'],
+                  4: this.web3Providers['RINKEBY'],
               }
             },
         };
-            // fortmatic: {
-            //   package: Fortmatic,
-            //   options: {
-            //     // Mikko's TESTNET api key
-            //     key: "pk_test_391E26A3B43A3350"
-            //   }
     }
 
     async disconnect(): Promise<void> {

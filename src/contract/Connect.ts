@@ -4,6 +4,7 @@ import { provider } from 'web3-core';
 import { TransactionConfig } from 'web3-eth';
 
 export interface Web3Provider {
+    isCached(): boolean;
     connect(): Promise<void>;
     disconnect(): Promise<void>;
     connected(): boolean;
@@ -26,6 +27,8 @@ class MetamaskProvider implements Web3Provider {
         }
         this._conneted = true;
     }
+
+    isCached() { return false; }
 
     async netId() {
         ValidationUtils.isTrue(!!this._web3, 'Connect first');

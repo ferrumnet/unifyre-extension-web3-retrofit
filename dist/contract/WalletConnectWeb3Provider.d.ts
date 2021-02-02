@@ -11,6 +11,7 @@ export declare class WalletConnectWeb3Provider implements Web3Provider, Injectab
     });
     __name__(): string;
     connect(): Promise<void>;
+    isCached(): boolean;
     disconnect(): Promise<void>;
     connected(): boolean;
     addEventListener(event: 'disconnect', fun: (reason: string) => void): void;

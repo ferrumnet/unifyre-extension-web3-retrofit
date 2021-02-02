@@ -12,6 +12,8 @@ export declare class Web3ModalProvider implements Web3Provider {
         [network: string]: string;
     });
     connect(): Promise<void>;
+    isCached(): boolean;
+    private getModal;
     private providerOptions;
     disconnect(): Promise<void>;
     private _disconnect;

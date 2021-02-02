@@ -2,6 +2,7 @@ import { Injectable } from "ferrum-plumbing";
 import Web3 from "web3";
 import { TransactionConfig } from 'web3-eth';
 export interface Web3Provider {
+    isCached(): boolean;
     connect(): Promise<void>;
     disconnect(): Promise<void>;
     connected(): boolean;

@@ -58,6 +58,10 @@ class WalletConnectWeb3Provider {
             }
         });
     }
+    isCached() {
+        // TODO: Get from the session cache
+        return false;
+    }
     disconnect() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.connector.killSession();

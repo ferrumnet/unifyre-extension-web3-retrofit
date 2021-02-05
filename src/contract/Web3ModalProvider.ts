@@ -20,11 +20,7 @@ export class Web3ModalProvider implements Web3Provider {
 
     async connect(): Promise<void> {
         const modal = this.getModal();
-        if (modal.cachedProvider) {
-            this._provider = modal.cachedProvider;
-        } else {
-            this._provider = await modal.connect();
-        }
+        this._provider = await modal.connect();
         this._web3 = new Web3(this._provider!);
         this.initWeb3();
         this.subscribeProvider();

@@ -26,12 +26,7 @@ class Web3ModalProvider {
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             const modal = this.getModal();
-            if (modal.cachedProvider) {
-                this._provider = modal.cachedProvider;
-            }
-            else {
-                this._provider = yield modal.connect();
-            }
+            this._provider = yield modal.connect();
             this._web3 = new web3_1.default(this._provider);
             this.initWeb3();
             this.subscribeProvider();

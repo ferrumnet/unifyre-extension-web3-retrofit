@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TokenContract = exports.TokenContractFactory = exports.ContractCallError = void 0;
+exports.TokenContract = exports.tryWithBytes32 = exports.TokenContractFactory = exports.ContractCallError = void 0;
 const ferrum_plumbing_1 = require("ferrum-plumbing");
 const FerrumToken_json_1 = __importDefault(require("./FerrumToken.json"));
 const big_js_1 = require("big.js");
+const web3_1 = __importDefault(require("web3"));
 class ContractCallError extends Error {
     constructor(msg, error) {
         super(msg);
@@ -85,6 +86,31 @@ class TokenContractFactory {
     }
 }
 exports.TokenContractFactory = TokenContractFactory;
+function tryWithBytes32(web3, name, address, fun) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            return yield fun();
+        }
+        catch (e) {
+            const cont = new web3.eth.Contract([{
+                    "constant": true,
+                    "inputs": [],
+                    "name": name,
+                    "outputs": [
+                        {
+                            "name": "",
+                            "type": "bytes32"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }], address);
+            const val = yield cont.methods[name]().call();
+            return web3_1.default.utils.hexToUtf8(val);
+        }
+    });
+}
+exports.tryWithBytes32 = tryWithBytes32;
 class TokenContract extends ContractBase {
     constructor(connection) {
         super(connection);
@@ -98,8 +124,8 @@ class TokenContract extends ContractBase {
             }
             const web3 = this.connection.getProvider().web3();
             this.contract = yield new web3.eth.Contract(FerrumToken_json_1.default.abi, tokenAddress);
-            this.name = yield this.contract.methods.name.call().call();
-            this.symbol = yield this.contract.methods.symbol.call().call();
+            this.name = yield tryWithBytes32(web3, 'name', tokenAddress, () => __awaiter(this, void 0, void 0, function* () { return this.contract.methods.name.call().call(); }));
+            this.symbol = yield tryWithBytes32(web3, 'symbol', tokenAddress, () => __awaiter(this, void 0, void 0, function* () { return this.contract.methods.symbol.call().call(); }));
             this.decimals = yield this.contract.methods.decimals.call().call();
         });
     }

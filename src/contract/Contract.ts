@@ -2,6 +2,7 @@ import { Injectable, LocalCache, ValidationUtils } from 'ferrum-plumbing';
 import FerrumJson from './FerrumToken.json'
 import { Big } from 'big.js';
 import { Connect } from './Connect';
+import Web3 from 'web3';
 
 export class ContractCallError extends Error {
     constructor(msg: string, public error: any) {
@@ -69,6 +70,28 @@ export class TokenContractFactory implements Injectable {
     }
 }
 
+export async function tryWithBytes32(web3: any, name: string, address: string, fun: () => Promise<any>) {
+    try {
+        return await fun();
+    } catch(e) {
+        const cont = new web3.eth.Contract([{
+            "constant": true,
+            "inputs": [],
+            "name": name,
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes32"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }], address);
+        const val = await cont.methods[name]().call();
+        return Web3.utils.hexToUtf8(val);
+    }
+}
+
 export class TokenContract extends ContractBase {
     private contract: any;
     private name?: string;
@@ -86,8 +109,10 @@ export class TokenContract extends ContractBase {
       }
       const web3 = this.connection.getProvider()!.web3()!;
       this.contract = await new web3.eth.Contract(FerrumJson.abi as any, tokenAddress);
-      this.name = await this.contract.methods.name.call().call();
-      this.symbol = await this.contract.methods.symbol.call().call();
+      this.name = await tryWithBytes32(web3, 'name', tokenAddress, 
+        async () => this.contract.methods.name.call().call());
+      this.symbol = await tryWithBytes32(web3, 'symbol', tokenAddress, 
+        async () => this.contract.methods.symbol.call().call());
       this.decimals = await this.contract.methods.decimals.call().call();
    } 
   

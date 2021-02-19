@@ -25,6 +25,7 @@ export declare class TokenContractFactory implements Injectable {
     __name__(): string;
     forToken(token: string): Promise<TokenContract>;
 }
+export declare function tryWithBytes32(web3: any, name: string, address: string, fun: () => Promise<any>): Promise<any>;
 export declare class TokenContract extends ContractBase {
     private contract;
     private name?;

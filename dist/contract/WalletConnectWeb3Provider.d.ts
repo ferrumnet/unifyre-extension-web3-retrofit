@@ -18,6 +18,7 @@ export declare class WalletConnectWeb3Provider implements Web3Provider, Injectab
     netId(): Promise<number>;
     getAccounts(): Promise<string[]>;
     sendTransaction(tx: TransactionConfig): Promise<any>;
+    send(request: any): Promise<string>;
     web3(): Web3 | undefined;
     private setWeb3;
 }

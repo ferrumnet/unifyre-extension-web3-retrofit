@@ -23,6 +23,7 @@ export declare class Web3ModalProvider implements Web3Provider {
     getAccounts(): Promise<string[]>;
     web3(): types | undefined;
     sendTransaction(tx: TransactionConfig): Promise<string>;
+    send(request: any): Promise<string>;
     private subscribeProvider;
     private initWeb3;
 }

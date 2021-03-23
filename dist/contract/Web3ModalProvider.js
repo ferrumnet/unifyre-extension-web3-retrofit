@@ -52,6 +52,8 @@ class Web3ModalProvider {
                     rpc: {
                         1: this.web3Providers['ETHEREUM'],
                         4: this.web3Providers['RINKEBY'],
+                        56: this.web3Providers['BSC'],
+                        97: this.web3Providers['BSC_TESTNET'],
                     }
                 }
             },
@@ -145,6 +147,19 @@ class Web3ModalProvider {
                     resolve(h);
                 }
             }).catch(reject);
+        });
+    }
+    send(request) {
+        ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
+        return new Promise((resolve, reject) => {
+            this._web3.currentProvider.send(request, (e, h) => {
+                if (!!e) {
+                    reject(e);
+                }
+                else {
+                    resolve(h === null || h === void 0 ? void 0 : h.result);
+                }
+            });
         });
     }
     subscribeProvider() {

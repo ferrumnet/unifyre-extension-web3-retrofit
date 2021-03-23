@@ -79,7 +79,7 @@ class MetamaskProvider implements Web3Provider {
         });
     }
 
-    sendAsync(request: any) {
+    send(request: any) {
         ValidationUtils.isTrue(!!this._web3, 'Connect first');
         return new Promise<string>((resolve, reject) => { 
             (this._web3!.currentProvider! as HttpProvider).send(request,

@@ -11,6 +11,7 @@ export interface Web3Provider {
     getAccounts(): Promise<string[]>;
     web3(): Web3 | undefined;
     sendTransaction(tx: TransactionConfig): Promise<string>;
+    send(request: any): Promise<string>;
 }
 export declare class Connect implements Injectable {
     private _netId?;

@@ -3,7 +3,7 @@ import { TransactionConfig } from "web3-eth";
 import { Web3Provider } from "./Connect";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
-import { provider } from 'web3-core';
+import { provider, HttpProvider } from 'web3-core';
 // @ts-ignore
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ValidationUtils } from "ferrum-plumbing";
@@ -139,6 +139,18 @@ export class Web3ModalProvider implements Web3Provider {
                     resolve(h);
                 }
             }).catch(reject);
+        });
+    }
+
+    send(request: any): Promise<string> {
+        ValidationUtils.isTrue(!!this._web3, 'Connect first');
+        return new Promise<string>((resolve, reject) => { 
+            (this._web3!.currentProvider! as HttpProvider).send(request,
+            (e, h) => {
+                if (!!e) { reject(e) } else {
+                    resolve(h?.result);
+                }
+            });
         });
     }
 

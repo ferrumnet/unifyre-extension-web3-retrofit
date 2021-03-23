@@ -104,6 +104,16 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
             return txIds.join(',') + '|' + JSON.stringify(payload || '');
         });
     }
+    // TODO: Manage with sign (for unifyre)
+    sendAsync(request, payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Sign and send transaction. Return transaction IDs joined with comma
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!request, '"request" must be provided');
+            const rv = yield this.connection.getProvider().send(request);
+            // We should return a request ID. In this case we just return result as the request ID
+            return rv + '|' + JSON.stringify(payload || '');
+        });
+    }
     getSendTransactionResponse(requestId, timeout) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!requestId, '"requestId" must be provided');

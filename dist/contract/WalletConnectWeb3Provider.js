@@ -97,6 +97,13 @@ class WalletConnectWeb3Provider {
         ferrum_plumbing_1.ValidationUtils.isTrue(!!this.connector, 'Connect first');
         return this.connector.sendTransaction(tx);
     }
+    send(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this.connector, 'Connect first');
+            throw new Error('Not implemented for wallet connect');
+            return '';
+        });
+    }
     web3() {
         return this._web3;
     }

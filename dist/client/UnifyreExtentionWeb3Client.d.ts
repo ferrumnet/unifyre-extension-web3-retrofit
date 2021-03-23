@@ -22,6 +22,7 @@ export declare class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClien
     sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
     getSendMoneyResponse(requestId: string): Promise<SendMoneyResponse>;
     sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[], payload?: any): Promise<string>;
+    sendAsync(request: any, payload?: any): Promise<string>;
     getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse>;
     getTransaction(transactionId: string): Promise<any>;
 }

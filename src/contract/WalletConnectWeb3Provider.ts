@@ -85,6 +85,12 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
         return this.connector!.sendTransaction(tx as any);
     }
 
+    async send(request: any) {
+        ValidationUtils.isTrue(!!this.connector, 'Connect first');
+        throw new Error('Not implemented for wallet connect');
+        return '';
+    }
+
     web3(): Web3 | undefined {
         return this._web3;
     }

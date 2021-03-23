@@ -1,6 +1,6 @@
 import { Injectable, ValidationUtils } from "ferrum-plumbing";
 import Web3 from "web3";
-import { provider } from 'web3-core';
+import { provider, HttpProvider } from 'web3-core';
 import { TransactionConfig } from 'web3-eth';
 
 export interface Web3Provider {
@@ -13,6 +13,7 @@ export interface Web3Provider {
     getAccounts(): Promise<string[]>;
     web3(): Web3|undefined;
     sendTransaction(tx: TransactionConfig): Promise<string>;
+    send(request: any): Promise<string>;
 }
 
 class MetamaskProvider implements Web3Provider {
@@ -75,6 +76,18 @@ class MetamaskProvider implements Web3Provider {
                     resolve(h);
                 }
             }).catch(reject);
+        });
+    }
+
+    sendAsync(request: any) {
+        ValidationUtils.isTrue(!!this._web3, 'Connect first');
+        return new Promise<string>((resolve, reject) => { 
+            (this._web3!.currentProvider! as HttpProvider).send(request,
+            (e, h) => {
+                if (!!e) { reject(e) } else {
+                    resolve(h?.result!);
+                }
+            });
         });
     }
 

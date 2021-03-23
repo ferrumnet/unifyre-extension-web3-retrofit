@@ -100,6 +100,16 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         return txIds.join(',') + '|' + JSON.stringify(payload || '');
     }
 
+    // TODO: Manage with sign (for unifyre)
+    async sendAsync(request: any, payload?: any):
+    Promise<string> {
+        // Sign and send transaction. Return transaction IDs joined with comma
+        ValidationUtils.isTrue(!!request, '"request" must be provided');
+        const rv = await this.connection.getProvider()!.send(request);
+        // We should return a request ID. In this case we just return result as the request ID
+        return rv + '|' + JSON.stringify(payload || '');
+    }
+
     async getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse> {
         ValidationUtils.isTrue(!!requestId, '"requestId" must be provided');
         ValidationUtils.isTrue(requestId.startsWith('0x') || requestId.startsWith('0X'), 'Invalid web3 request ID');

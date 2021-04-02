@@ -145,6 +145,10 @@ class Connect {
                 return 'ETHEREUM';
             case 4:
                 return 'RINKEBY';
+            case 97:
+                return 'BSC_TESTNET';
+            case 56:
+                return 'BSC';
         }
     }
     account() {

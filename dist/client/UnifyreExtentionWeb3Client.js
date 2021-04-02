@@ -39,17 +39,26 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
             ferrum_plumbing_1.ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
             const addressesF = this.currencyList.get().map((c) => __awaiter(this, void 0, void 0, function* () {
                 const [network, tokenAddr] = c.split(':');
-                const token = yield this.tokenFac.forToken(tokenAddr);
+                const currentNet = this.connection.network();
+                let balance = '0';
+                let symbol = '';
+                if (network === currentNet) {
+                    const token = yield this.tokenFac.forToken(tokenAddr);
+                    if (!!userAddress) {
+                        balance = yield token.balanceOf(userAddress);
+                    }
+                    symbol = yield token.getSymbol();
+                }
                 return {
                     address: userAddress.toLocaleLowerCase(),
                     addressType: 'ADDRESS',
-                    balance: !!userAddress ? yield token.balanceOf(userAddress) : '0',
+                    balance,
                     currency: c,
                     humanReadableAddress: userAddress,
                     network,
                     pendingForDeposit: '0',
                     pendingForWithdrawal: '0',
-                    symbol: (yield token.getSymbol()) || '',
+                    symbol: symbol,
                     addressWithChecksum: userAddress,
                 };
             }));

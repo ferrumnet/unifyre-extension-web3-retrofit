@@ -29,17 +29,26 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
         const addressesF = this.currencyList.get().map(async c => {
             const [network, tokenAddr] = c.split(':');
-            const token = await this.tokenFac.forToken(tokenAddr);
+            const currentNet = this.connection.network();
+            let balance: string = '0'; 
+            let symbol: string = ''; 
+            if (network === currentNet) {
+                const token = await this.tokenFac.forToken(tokenAddr);
+                if (!!userAddress) {
+                    balance = await token.balanceOf(userAddress); 
+                }
+                symbol = await token.getSymbol()!;
+            }
             return {
                 address: userAddress.toLocaleLowerCase(),
                 addressType: 'ADDRESS',
-                balance: !!userAddress ? await token.balanceOf(userAddress) : '0',
+                balance,
                 currency: c,
                 humanReadableAddress: userAddress,
                 network,
                 pendingForDeposit: '0',
                 pendingForWithdrawal: '0',
-                symbol: await token.getSymbol() || '',
+                symbol: symbol,
                 addressWithChecksum: userAddress,
             } as AddressDetails;
         });

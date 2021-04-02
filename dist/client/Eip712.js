@@ -20,7 +20,7 @@ exports.eip712Json = eip712Json;
 function eipTransactionRequest(web3, signerAddress, eipJsonData) {
     const signerChecksum = web3.utils.toChecksumAddress(signerAddress);
     return ({
-        method: "eth_signTypedData_v",
+        method: "eth_signTypedData_v4",
         params: [signerChecksum, eipJsonData],
         from: signerChecksum
     });

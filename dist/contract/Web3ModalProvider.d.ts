@@ -8,6 +8,7 @@ export declare class Web3ModalProvider implements Web3Provider {
     private _web3;
     private _connected;
     private _onDisconnect;
+    private _onChange;
     constructor(web3Providers: {
         [network: string]: string;
     });
@@ -16,9 +17,12 @@ export declare class Web3ModalProvider implements Web3Provider {
     private getModal;
     private providerOptions;
     disconnect(): Promise<void>;
+    changed(): Promise<void>;
+    private _clear;
+    private _change;
     private _disconnect;
     connected(): boolean;
-    addEventListener(event: "disconnect", fun: (reason: string) => void): void;
+    addEventListener(event: 'disconnect' | 'change', fun: (reason: string) => void): void;
     netId(): Promise<number>;
     getAccounts(): Promise<string[]>;
     web3(): types | undefined;

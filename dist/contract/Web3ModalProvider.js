@@ -64,7 +64,12 @@ class Web3ModalProvider {
             return this._disconnect();
         });
     }
-    _disconnect(error, payload) {
+    changed() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this._change();
+        });
+    }
+    _clear() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._modal) {
                 this._modal.clearCachedProvider();
@@ -86,8 +91,22 @@ class Web3ModalProvider {
             this._modal = undefined;
             this._provider = undefined;
             this._web3 = undefined;
-            const onDisc = this._onDisconnect;
             this._onDisconnect = undefined;
+            this._onChange = undefined;
+        });
+    }
+    _change() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const onDisc = this._onChange;
+            if (onDisc) {
+                onDisc();
+            }
+        });
+    }
+    _disconnect(error, payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const onDisc = this._onDisconnect;
+            this._clear();
             if (onDisc) {
                 if (error) {
                     onDisc(error === null || error === void 0 ? void 0 : error.message);
@@ -109,7 +128,12 @@ class Web3ModalProvider {
         return this._connected;
     }
     addEventListener(event, fun) {
-        this._onDisconnect = fun;
+        if (event === 'disconnect') {
+            this._onDisconnect = fun;
+        }
+        if (event === 'change') {
+            this._onChange = fun;
+        }
         const prov = this._provider;
         if (prov) {
             prov.on("close", (error, payload) => {
@@ -170,13 +194,13 @@ class Web3ModalProvider {
             }
             provider.on("close", () => this.disconnect());
             provider.on("accountsChanged", (accounts) => __awaiter(this, void 0, void 0, function* () {
-                this.disconnect();
+                this.changed();
             }));
             provider.on("chainChanged", (chainId) => __awaiter(this, void 0, void 0, function* () {
-                this.disconnect();
+                this.changed();
             }));
             provider.on("networkChanged", (networkId) => __awaiter(this, void 0, void 0, function* () {
-                this.disconnect();
+                this.changed();
             }));
         });
     }

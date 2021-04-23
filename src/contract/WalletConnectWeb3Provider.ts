@@ -61,7 +61,7 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
         return this.connector?.connected || false;
     }
 
-    addEventListener(event: 'disconnect', fun: (reason: string) => void): void {
+    addEventListener(event: 'disconnect'|'change', fun: (reason: string) => void): void {
         this.connector!.on(event, (error, payload) => {
             console.error('Wallet connect disconnected', error);
             if (error) {

@@ -8,7 +8,7 @@ export interface Web3Provider {
     connect(): Promise<void>;
     disconnect(): Promise<void>;
     connected(): boolean;
-    addEventListener(event: 'disconnect', fun: (reason: string) => void): void;
+    addEventListener(event: 'disconnect'|'change', fun: (reason: string) => void): void;
     netId(): Promise<number>;
     getAccounts(): Promise<string[]>;
     web3(): Web3|undefined;
@@ -52,7 +52,7 @@ class MetamaskProvider implements Web3Provider {
         return this._conneted;
     }
 
-    addEventListener(_: 'disconnect', fun: (reason: string) => void) {
+    addEventListener(_: 'disconnect'|'change', fun: (reason: string) => void) {
         // @ts-ignore
         if (window.ethereum) {
             // @ts-ignore
@@ -118,10 +118,15 @@ export class Connect implements Injectable {
     async connect() {
         const prov = this._provider!;
         await prov.connect();
+        this.reset();
+        return this._account;
+    }
+
+    async reset() {
+        const prov = this._provider!;
         this._netId = await prov.netId();
         const accounts = await prov.getAccounts();
         this._account = accounts[0];
-        return this.account;
     }
     
     setProvider(prov: Web3Provider) {

@@ -119,10 +119,16 @@ class Connect {
         return __awaiter(this, void 0, void 0, function* () {
             const prov = this._provider;
             yield prov.connect();
+            this.reset();
+            return this._account;
+        });
+    }
+    reset() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prov = this._provider;
             this._netId = yield prov.netId();
             const accounts = yield prov.getAccounts();
             this._account = accounts[0];
-            return this.account;
         });
     }
     setProvider(prov) {

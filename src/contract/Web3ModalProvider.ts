@@ -14,6 +14,7 @@ export class Web3ModalProvider implements Web3Provider {
     private _web3: Web3 | undefined;
     private _connected: boolean = false;
     private _onDisconnect: any;
+    private _onChange: any;
 
     constructor(private web3Providers: {[network: string]: string}) {
     }
@@ -60,8 +61,11 @@ export class Web3ModalProvider implements Web3Provider {
         return this._disconnect();
     }
 
-    private async _disconnect(error?: Error, payload?: any): Promise<void> {
+    async changed(): Promise<void> {
+        return this._change();
+    }
 
+    private async _clear() {
         if (this._modal) {
             this._modal!.clearCachedProvider();
         }
@@ -81,8 +85,20 @@ export class Web3ModalProvider implements Web3Provider {
         this._modal = undefined;
         this._provider = undefined;
         this._web3 = undefined;
-        const onDisc = this._onDisconnect;
         this._onDisconnect = undefined;
+        this._onChange = undefined;
+    }
+
+    private async _change() {
+        const onDisc = this._onChange;
+        if (onDisc) {
+            onDisc();
+        }
+    }
+
+    private async _disconnect(error?: Error, payload?: any): Promise<void> {
+        const onDisc = this._onDisconnect;
+        this._clear();
         if (onDisc) {
             if (error) {
                 onDisc(error?.message);
@@ -102,8 +118,12 @@ export class Web3ModalProvider implements Web3Provider {
         return this._connected;
     }
 
-    addEventListener(event: "disconnect", fun: (reason: string) => void): void {
-        this._onDisconnect = fun;
+    addEventListener(event: 'disconnect'|'change', fun: (reason: string) => void): void {
+        if (event === 'disconnect') {
+            this._onDisconnect = fun;
+        } if (event === 'change') {
+            this._onChange = fun;
+        }
         const prov = this._provider as any;
         if (prov) {
             prov.on("close", (error: any, payload: any) => {
@@ -161,14 +181,14 @@ export class Web3ModalProvider implements Web3Provider {
         }
         provider.on("close", () => this.disconnect());
         provider.on("accountsChanged", async (accounts: string[]) => {
-            this.disconnect();
+            this.changed();
         });
         provider.on("chainChanged", async (chainId: number) => {
-            this.disconnect();
+            this.changed();
         });
     
         provider.on("networkChanged", async (networkId: number) => {
-            this.disconnect();
+            this.changed();
         });
     }
 

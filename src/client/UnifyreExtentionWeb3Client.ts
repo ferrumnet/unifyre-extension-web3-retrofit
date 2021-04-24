@@ -1,6 +1,6 @@
 import { Network, ValidationUtils } from "ferrum-plumbing";
-import { Connect } from "src/contract/Connect";
-import { TokenContractFactory } from "src/contract/Contract";
+import { Connect } from "../contract/Connect";
+import { TokenContractFactory } from "../contract/Contract";
 import { CustomTransactionCallRequest, CustomTransactionCallResponse, SendMoneyResponse, UnifyreExtensionKitClient } from "unifyre-extension-sdk";
 import { AppLinkRequest } from "unifyre-extension-sdk/dist/client/model/AppLink";
 import { AddressDetails, AppUserProfile, UserAccountGroup } from "unifyre-extension-sdk/dist/client/model/AppUserProfile";
@@ -27,9 +27,10 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         // Cretate a user profile. And get token fetches for addresses.
         const userAddress = this.connection.account() || '';
         ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
-        const addressesF = this.currencyList.get().map(async c => {
+        const currentNet = this.connection.network();
+        const currencies = this.currencyList.get().filter(c => c.startsWith(currentNet as string));
+        const addressesF = currencies.map(async c => {
             const [network, tokenAddr] = c.split(':');
-            const currentNet = this.connection.network();
             let balance: string = '0'; 
             let symbol: string = ''; 
             if (network === currentNet) {

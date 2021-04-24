@@ -37,9 +37,10 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
             // Cretate a user profile. And get token fetches for addresses.
             const userAddress = this.connection.account() || '';
             ferrum_plumbing_1.ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
-            const addressesF = this.currencyList.get().map((c) => __awaiter(this, void 0, void 0, function* () {
+            const currentNet = this.connection.network();
+            const currencies = this.currencyList.get().filter(c => c.startsWith(currentNet));
+            const addressesF = currencies.map((c) => __awaiter(this, void 0, void 0, function* () {
                 const [network, tokenAddr] = c.split(':');
-                const currentNet = this.connection.network();
                 let balance = '0';
                 let symbol = '';
                 if (network === currentNet) {

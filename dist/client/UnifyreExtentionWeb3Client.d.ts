@@ -1,6 +1,6 @@
 import { Network } from "ferrum-plumbing";
-import { Connect } from "src/contract/Connect";
-import { TokenContractFactory } from "src/contract/Contract";
+import { Connect } from "../contract/Connect";
+import { TokenContractFactory } from "../contract/Contract";
 import { CustomTransactionCallRequest, CustomTransactionCallResponse, SendMoneyResponse, UnifyreExtensionKitClient } from "unifyre-extension-sdk";
 import { AppLinkRequest } from "unifyre-extension-sdk/dist/client/model/AppLink";
 import { AppUserProfile } from "unifyre-extension-sdk/dist/client/model/AppUserProfile";

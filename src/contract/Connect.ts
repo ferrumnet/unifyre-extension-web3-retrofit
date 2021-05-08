@@ -118,7 +118,7 @@ export class Connect implements Injectable {
     async connect() {
         const prov = this._provider!;
         await prov.connect();
-        this.reset();
+        await this.reset();
         return this._account;
     }
 

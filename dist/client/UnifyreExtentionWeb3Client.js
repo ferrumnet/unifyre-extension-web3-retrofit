@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UnifyreExtensionWeb3Client = void 0;
 const ferrum_plumbing_1 = require("ferrum-plumbing");
 const unifyre_extension_sdk_1 = require("unifyre-extension-sdk");
+const web3_1 = __importDefault(require("web3"));
+const BASE_CURRENCIES = ['BNB', 'ETH'];
 class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensionKitClient {
     constructor(appId, currencyList, connection, tokenFac) {
         super();
@@ -33,22 +38,35 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
         });
     }
     getUserProfile() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             // Cretate a user profile. And get token fetches for addresses.
             const userAddress = this.connection.account() || '';
             ferrum_plumbing_1.ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
             const currentNet = this.connection.network();
             const currencies = this.currencyList.get().filter(c => c.startsWith(currentNet));
+            const web3 = (_a = this.connection.getProvider()) === null || _a === void 0 ? void 0 : _a.web3();
             const addressesF = currencies.map((c) => __awaiter(this, void 0, void 0, function* () {
                 const [network, tokenAddr] = c.split(':');
                 let balance = '0';
                 let symbol = '';
                 if (network === currentNet) {
-                    const token = yield this.tokenFac.forToken(tokenAddr);
-                    if (!!userAddress) {
-                        balance = yield token.balanceOf(userAddress);
+                    if (BASE_CURRENCIES.indexOf(tokenAddr) >= 0) {
+                        symbol = tokenAddr;
+                        if (!!web3) {
+                            balance = web3_1.default.utils.fromWei(yield web3.eth.getBalance(userAddress));
+                        }
+                        else {
+                            balance = '0';
+                        }
                     }
-                    symbol = yield token.getSymbol();
+                    else {
+                        const token = yield this.tokenFac.forToken(tokenAddr);
+                        if (!!userAddress) {
+                            balance = yield token.balanceOf(userAddress);
+                        }
+                        symbol = yield token.getSymbol();
+                    }
                 }
                 return {
                     address: userAddress.toLocaleLowerCase(),

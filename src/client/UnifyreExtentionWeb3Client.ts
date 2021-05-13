@@ -6,6 +6,9 @@ import { AppLinkRequest } from "unifyre-extension-sdk/dist/client/model/AppLink"
 import { AddressDetails, AppUserProfile, UserAccountGroup } from "unifyre-extension-sdk/dist/client/model/AppUserProfile";
 import { CurrencyList } from "./CurrencyList";
 import { TransactionConfig } from 'web3-eth';
+import Web3 from "web3";
+
+const BASE_CURRENCIES = ['BNB', 'ETH'];
 
 export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     constructor(private appId: string, private currencyList: CurrencyList,
@@ -29,16 +32,26 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
         const currentNet = this.connection.network();
         const currencies = this.currencyList.get().filter(c => c.startsWith(currentNet as string));
+        const web3 = this.connection.getProvider()?.web3();
         const addressesF = currencies.map(async c => {
             const [network, tokenAddr] = c.split(':');
             let balance: string = '0'; 
             let symbol: string = ''; 
             if (network === currentNet) {
-                const token = await this.tokenFac.forToken(tokenAddr);
-                if (!!userAddress) {
-                    balance = await token.balanceOf(userAddress); 
+                if (BASE_CURRENCIES.indexOf(tokenAddr) >= 0) {
+                    symbol  = tokenAddr;
+                    if (!!web3) {
+                        balance = Web3.utils.fromWei(await web3!.eth.getBalance(userAddress));
+                    } else {
+                        balance = '0';
+                    }
+                } else {
+                    const token = await this.tokenFac.forToken(tokenAddr);
+                    if (!!userAddress) {
+                        balance = await token.balanceOf(userAddress); 
+                    }
+                    symbol = await token.getSymbol()!;
                 }
-                symbol = await token.getSymbol()!;
             }
             return {
                 address: userAddress.toLocaleLowerCase(),

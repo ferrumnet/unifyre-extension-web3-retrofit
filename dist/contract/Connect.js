@@ -155,6 +155,10 @@ class Connect {
                 return 'BSC_TESTNET';
             case 56:
                 return 'BSC';
+            case 137:
+                return 'MATIC';
+            case 80001:
+                return 'MUMBAI_TESTNET';
         }
     }
     account() {

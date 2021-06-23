@@ -20,6 +20,10 @@ const web3_1 = __importDefault(require("web3"));
 const CHAIN_ID_MAP = {
     1: 'ETHEREUM',
     4: 'RINKEBY',
+    137: 'MATIC',
+    80001: 'MUMBAI_TESTNET',
+    56: 'BSC',
+    97: 'BSC_TESTNET',
 };
 class WalletConnectWeb3Provider {
     constructor(web3Providers) {

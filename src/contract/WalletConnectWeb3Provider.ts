@@ -8,6 +8,10 @@ import Web3 from 'web3';
 const CHAIN_ID_MAP: {[k: number]: string} = {
     1: 'ETHEREUM',
     4: 'RINKEBY',
+    137: 'MATIC',
+    80001: 'MUMBAI_TESTNET',
+    56: 'BSC',
+    97: 'BSC_TESTNET',
 }
 
 export class WalletConnectWeb3Provider implements Web3Provider, Injectable {

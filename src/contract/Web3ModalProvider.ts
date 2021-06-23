@@ -51,6 +51,8 @@ export class Web3ModalProvider implements Web3Provider {
                     4: this.web3Providers['RINKEBY'],
                     56: this.web3Providers['BSC'],
                     97: this.web3Providers['BSC_TESTNET'],
+                    137: this.web3Providers['MATIC'],
+                    80001: this.web3Providers['MUMBAI_TESTNET']
                 }
               }
             },

@@ -16,7 +16,7 @@ exports.UnifyreExtensionWeb3Client = void 0;
 const ferrum_plumbing_1 = require("ferrum-plumbing");
 const unifyre_extension_sdk_1 = require("unifyre-extension-sdk");
 const web3_1 = __importDefault(require("web3"));
-const BASE_CURRENCIES = ['BNB', 'ETH'];
+const Networks_1 = require("ferrum-plumbing/dist/models/types/Networks");
 class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensionKitClient {
     constructor(appId, currencyList, connection, tokenFac) {
         super();
@@ -50,8 +50,9 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
                 const [network, tokenAddr] = c.split(':');
                 let balance = '0';
                 let symbol = '';
+                const netObj = Networks_1.Networks.for(network);
                 if (network === currentNet) {
-                    if (BASE_CURRENCIES.indexOf(tokenAddr) >= 0) {
+                    if (netObj.baseSymbol === tokenAddr) {
                         symbol = tokenAddr;
                         if (!!web3) {
                             balance = web3_1.default.utils.fromWei(yield web3.eth.getBalance(userAddress));

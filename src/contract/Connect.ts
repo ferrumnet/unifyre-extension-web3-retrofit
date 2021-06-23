@@ -1,4 +1,5 @@
 import { Injectable, ValidationUtils } from "ferrum-plumbing";
+import { Networks } from "ferrum-plumbing/dist/models/types/Networks";
 import Web3 from "web3";
 import { provider, HttpProvider } from 'web3-core';
 import { TransactionConfig } from 'web3-eth';
@@ -148,16 +149,7 @@ export class Connect implements Injectable {
     }
 
     network() {
-        switch (this.netId()) {
-            case 1:
-                return 'ETHEREUM';
-            case 4:
-                return 'RINKEBY';
-            case 97:
-                return 'BSC_TESTNET';
-            case 56:
-                return 'BSC';
-        }
+		return Networks.forChainId(this._netId!).id;
     }
 
     account() {

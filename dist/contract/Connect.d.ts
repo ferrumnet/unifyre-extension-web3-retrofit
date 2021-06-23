@@ -25,7 +25,7 @@ export declare class Connect implements Injectable {
     getProvider(): Web3Provider | undefined;
     connected(): boolean | undefined;
     netId(): number | undefined;
-    network(): "ETHEREUM" | "RINKEBY" | "BSC_TESTNET" | "BSC" | undefined;
+    network(): string;
     account(): string | undefined;
 }
 //# sourceMappingURL=Connect.d.ts.map

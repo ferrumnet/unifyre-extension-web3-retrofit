@@ -7,8 +7,7 @@ import { AddressDetails, AppUserProfile, UserAccountGroup } from "unifyre-extens
 import { CurrencyList } from "./CurrencyList";
 import { TransactionConfig } from 'web3-eth';
 import Web3 from "web3";
-
-const BASE_CURRENCIES = ['BNB', 'ETH'];
+import { Networks } from "ferrum-plumbing/dist/models/types/Networks";
 
 export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
     constructor(private appId: string, private currencyList: CurrencyList,
@@ -37,8 +36,9 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
             const [network, tokenAddr] = c.split(':');
             let balance: string = '0'; 
             let symbol: string = ''; 
+			const netObj = Networks.for(network);
             if (network === currentNet) {
-                if (BASE_CURRENCIES.indexOf(tokenAddr) >= 0) {
+                if (netObj.baseSymbol === tokenAddr) {
                     symbol  = tokenAddr;
                     if (!!web3) {
                         balance = Web3.utils.fromWei(await web3!.eth.getBalance(userAddress));

@@ -3,12 +3,8 @@ import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { TransactionConfig } from 'web3-eth';
 import { Injectable, ValidationUtils } from 'ferrum-plumbing';
+import { Networks } from 'ferrum-plumbing/dist/models/types/Networks';
 import Web3 from 'web3';
-
-const CHAIN_ID_MAP: {[k: number]: string} = {
-    1: 'ETHEREUM',
-    4: 'RINKEBY',
-}
 
 export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
     private connector: WalletConnect | undefined;
@@ -99,7 +95,7 @@ export class WalletConnectWeb3Provider implements Web3Provider, Injectable {
         ValidationUtils.isTrue(!!this.connector, 'Connect first');
         if (this._web3) { return; }
         const chainId = this.connector!.chainId;
-        const chainName = CHAIN_ID_MAP[chainId];
+        const chainName = Networks.forChainId(chainId).id;
         ValidationUtils.isTrue(!!chainName, `Selected chain with ID ${chainId} is not supported`);
         const httpUrl = this.web3Providers[chainName]
         ValidationUtils.isTrue(!!httpUrl, `No http provider is set for  ${chainName}`);

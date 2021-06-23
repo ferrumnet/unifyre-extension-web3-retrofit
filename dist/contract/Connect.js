@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Connect = void 0;
 const ferrum_plumbing_1 = require("ferrum-plumbing");
+const Networks_1 = require("ferrum-plumbing/dist/models/types/Networks");
 const web3_1 = __importDefault(require("web3"));
 class MetamaskProvider {
     constructor() {
@@ -146,16 +147,7 @@ class Connect {
         return this._netId;
     }
     network() {
-        switch (this.netId()) {
-            case 1:
-                return 'ETHEREUM';
-            case 4:
-                return 'RINKEBY';
-            case 97:
-                return 'BSC_TESTNET';
-            case 56:
-                return 'BSC';
-        }
+        return Networks_1.Networks.forChainId(this._netId).id;
     }
     account() {
         return this._account;

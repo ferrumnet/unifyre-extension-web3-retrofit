@@ -16,11 +16,8 @@ exports.WalletConnectWeb3Provider = void 0;
 const client_1 = __importDefault(require("@walletconnect/client"));
 const qrcode_modal_1 = __importDefault(require("@walletconnect/qrcode-modal"));
 const ferrum_plumbing_1 = require("ferrum-plumbing");
+const Networks_1 = require("ferrum-plumbing/dist/models/types/Networks");
 const web3_1 = __importDefault(require("web3"));
-const CHAIN_ID_MAP = {
-    1: 'ETHEREUM',
-    4: 'RINKEBY',
-};
 class WalletConnectWeb3Provider {
     constructor(web3Providers) {
         this.web3Providers = web3Providers;
@@ -113,7 +110,7 @@ class WalletConnectWeb3Provider {
             return;
         }
         const chainId = this.connector.chainId;
-        const chainName = CHAIN_ID_MAP[chainId];
+        const chainName = Networks_1.Networks.forChainId(chainId).id;
         ferrum_plumbing_1.ValidationUtils.isTrue(!!chainName, `Selected chain with ID ${chainId} is not supported`);
         const httpUrl = this.web3Providers[chainName];
         ferrum_plumbing_1.ValidationUtils.isTrue(!!httpUrl, `No http provider is set for  ${chainName}`);

@@ -30,7 +30,8 @@ export class UnifyreExtensionWeb3Client extends UnifyreExtensionKitClient {
         const userAddress = this.connection.account() || '';
         ValidationUtils.isTrue(!!userAddress, 'Make sure to initialize the web3 client such as Metamask');
         const currentNet = this.connection.network();
-        const currencies = this.currencyList.get().filter(c => c.startsWith(currentNet as string));
+		const networkPrefix = `${currentNet}:`;
+        const currencies = this.currencyList.get().filter(c => c.startsWith(networkPrefix as string));
         const web3 = this.connection.getProvider()?.web3();
         const addressesF = currencies.map(async c => {
             const [network, tokenAddr] = c.split(':');

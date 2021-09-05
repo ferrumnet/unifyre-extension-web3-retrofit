@@ -4,7 +4,6 @@ export interface DomainSeparator {
     version: string;
     chainId: string;
     verifyingContract: string;
-    salt: string;
 }
 export interface Eip712TypeItem {
     name: string;

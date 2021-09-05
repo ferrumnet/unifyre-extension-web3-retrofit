@@ -6,7 +6,6 @@ const domainType = [
     { name: "version", type: "string" },
     { name: "chainId", type: "uint256" },
     { name: "verifyingContract", type: "address" },
-    { name: "salt", type: "bytes32" },
 ];
 function eip712Json(domain, dataType, primaryType, message) {
     return JSON.stringify({

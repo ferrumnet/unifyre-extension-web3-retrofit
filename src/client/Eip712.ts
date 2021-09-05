@@ -5,7 +5,6 @@ export interface DomainSeparator {
     version: string;
     chainId: string;
     verifyingContract: string;
-    salt: string;
 }
 
 export interface Eip712TypeItem {
@@ -24,9 +23,7 @@ const domainType: Eip712Type  = [
     { name: "version", type: "string" },
     { name: "chainId", type: "uint256" },
     { name: "verifyingContract", type: "address" },
-    { name: "salt", type: "bytes32" },
 ];
-
 
 export function eip712Json(domain: DomainSeparator,
         dataType: Eip712TypeDefinition, primaryType: string, message: any) {

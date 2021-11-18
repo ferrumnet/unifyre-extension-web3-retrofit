@@ -54,6 +54,7 @@ class Web3ModalProvider {
                         4: this.web3Providers['RINKEBY'],
                         56: this.web3Providers['BSC'],
                         97: this.web3Providers['BSC_TESTNET'],
+                        43113: this.web3Providers['AVAX_TESTNET']
                     }
                 }
             },

@@ -34,7 +34,7 @@ class MetamaskProvider {
     netId() {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this._web3, 'Connect first');
-            return yield this._web3.eth.net.getId();
+            return yield this._web3.eth.getChainId();
         });
     }
     getAccounts() {

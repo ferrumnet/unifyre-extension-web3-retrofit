@@ -34,7 +34,7 @@ class MetamaskProvider implements Web3Provider {
 
     async netId() {
         ValidationUtils.isTrue(!!this._web3, 'Connect first');
-        return await this._web3!.eth.net.getId();
+        return await this._web3!.eth.getChainId();
     }
 
     async getAccounts(): Promise<string[]> {

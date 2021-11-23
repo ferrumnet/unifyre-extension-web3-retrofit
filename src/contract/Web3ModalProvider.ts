@@ -51,6 +51,7 @@ export class Web3ModalProvider implements Web3Provider {
                     4: this.web3Providers['RINKEBY'],
                     56: this.web3Providers['BSC'],
                     97: this.web3Providers['BSC_TESTNET'],
+                    43113: this.web3Providers['AVAX_TESTNET']
                 }
               }
             },
@@ -135,7 +136,7 @@ export class Web3ModalProvider implements Web3Provider {
 
     async netId(): Promise<number> {
         ValidationUtils.isTrue(!!this._web3, 'Connect first');
-        return await this._web3!.eth.net.getId();
+        return await this._web3!.eth.getChainId();
     }
 
     async getAccounts(): Promise<string[]> {

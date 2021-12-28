@@ -58,6 +58,8 @@ class Web3ModalProvider {
                         43114: this.web3Providers['AVAX_MAINNET'],
                         1285: this.web3Providers['MOON_MOONRIVER'],
                         1287: this.web3Providers['MOON_MOONBASE'],
+                        250: this.web3Providers['FTM_MAINNET'],
+                        4002: this.web3Providers['FTM_TESTNET']
                     }
                 }
             },

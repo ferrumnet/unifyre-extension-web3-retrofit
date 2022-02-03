@@ -51,7 +51,12 @@ export class Web3ModalProvider implements Web3Provider {
                     4: this.web3Providers['RINKEBY'],
                     56: this.web3Providers['BSC'],
                     97: this.web3Providers['BSC_TESTNET'],
-                    43113: this.web3Providers['AVAX_TESTNET']
+                    43113: this.web3Providers['AVAX_TESTNET'],
+                    43114: this.web3Providers['AVAX_MAINNET'],
+                    1285: this.web3Providers['MOON_MOONRIVER'],
+                    1287: this.web3Providers['MOON_MOONBASE'],
+                    250: this.web3Providers['FTM_MAINNET'],
+                    4002: this.web3Providers['FTM_TESTNET']
                 }
               }
             },

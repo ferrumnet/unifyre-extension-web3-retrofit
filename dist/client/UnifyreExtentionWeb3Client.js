@@ -47,6 +47,10 @@ class UnifyreExtensionWeb3Client extends unifyre_extension_sdk_1.UnifyreExtensio
             const networkPrefix = `${currentNet}:`;
             const currencies = this.currencyList.get().filter(c => c.startsWith(networkPrefix));
             const web3 = (_a = this.connection.getProvider()) === null || _a === void 0 ? void 0 : _a.web3();
+            const baseCur = `${networkPrefix}:${Networks_1.Networks.for(currentNet).baseSymbol}`;
+            if (currencies.indexOf(baseCur) < 0) {
+                currencies.push(baseCur);
+            }
             const addressesF = currencies.map((c) => __awaiter(this, void 0, void 0, function* () {
                 const [network, tokenAddr] = c.split(':');
                 let balance = '0';
